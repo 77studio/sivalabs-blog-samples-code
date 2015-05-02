@@ -1,5 +1,6 @@
 package com.sivalabs.springapp.web.controllers;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletResponse;
@@ -21,25 +22,40 @@ public class CallController {
 	@RequestMapping(value="alarm", method=RequestMethod.GET)
 	public void alarm(
 			HttpServletResponse response,
+			@RequestParam(value = "sys") String sysName,
 			@RequestParam(value = "host") String host,
 			@RequestParam(value = "ip") String ip,
 			@RequestParam(value = "type") String type,
 			@RequestParam(value = "value") String value,
-			@RequestParam(value = "recvId") String recvId,
-			@RequestParam(value = "recvType", required = false, defaultValue = "3") String recvType) {
+			@RequestParam(value = "recvs", required = false, defaultValue = "") String recvs,
+			@RequestParam(value = "grps", required = false, defaultValue = "") String grps,
+			@RequestParam(value = "recvType", required = false, defaultValue = "ALL") String recvType) {
+
+		sysName = encoding(sysName, "GBK");
+
 		Alarm alarm = new Alarm();
-		alarm.setAlarmType("ÄÚ´æ");
-		alarm.setAlarmValue("<=%5");
+		alarm.setAlarmType(type);
+		alarm.setAlarmValue(value);
 		alarm.setCreateTime(new Date());
 		alarm.setDelayMin(0);
-		alarm.setGroups("Group1");
-		alarm.setHostName("cnhq-01");
+		alarm.setGroups(grps);
+		alarm.setHostName(host);
 		alarm.setId(0L);
-		alarm.setIpAddr("192.168.187.199");
-		alarm.setReceivers("Recv1");
-		alarm.setRecvType("ALL");
-		alarm.setSysName("Spark¼¯Èº");
+		alarm.setIpAddr(ip);
+		alarm.setReceivers(recvs);
+		alarm.setRecvType(recvType);
+		alarm.setSysName(sysName);
 		timeoutQueue.push(alarm);
+	}
+
+	private static String encoding(String before, String encode) {
+		String after;
+		try {
+			after = new String(before.getBytes("iso-8859-1"), encode);
+			return after;
+		} catch (UnsupportedEncodingException e) {
+			return before;
+		}
 	}
 
 }
