@@ -52,7 +52,7 @@ public class QueueScanner {
 		emails.add("407037359@qq.com"); // TODO Only for test.
 		if (emails.size() <= 0)
 			return;
-		String[] toList = null;
+		String[] toList = new String[emails.size()];
 		toList = emails.toArray(toList);
 		this.mailSender.sendSimpleMail(getEmailTitle(alarm), getEmailText(alarm, true), toList);
 	}
@@ -131,7 +131,7 @@ public class QueueScanner {
 				+ alarm.getDelayMin() * 60000L);
 		sb.append(df.format(endTime));
 		sb.append(separator);
-		if (detail) {
+		if (detail && alarm.getChildren() != null && alarm.getChildren().size() > 0) {
 			sb.append("【详细】");
 			sb.append(separator);
 			sb.append("===  机器名，   IP，   报警值，   报警时间  ===");

@@ -209,7 +209,7 @@ public class Alarm {
 		List<String> res = new ArrayList<String>();
 		if (isNullOrEmpty(listStr))
 			return res;
-		for(String word : listStr.split("+")) {
+		for(String word : listStr.split("\\+")) {
 			if (isNullOrEmpty(word))
 				continue;
 			res.add(word);
