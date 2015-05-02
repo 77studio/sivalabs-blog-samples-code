@@ -1,5 +1,6 @@
 package com.sivalabs.springapp.entities;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -10,6 +11,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+
+import com.sivalabs.springapp.util.AlarmType;
+import com.sivalabs.springapp.util.RecvType;
 
 @Entity
 @Table(name = "ALARMS_TAB")
@@ -154,4 +158,86 @@ public class Alarm {
 		this.sysName = sysName;
 	}
 
+	public int count() {
+		int countSelf = 1;
+		if(this.getChildren() == null)
+			return countSelf;
+		int countChildren = this.getChildren().size();
+		return countSelf + countChildren;
+	}
+	
+	public boolean validate() {
+		if(isNullOrEmpty(this.getSysName()))
+			return false;
+		if(isNullOrEmpty(this.getAlarmType()))
+			return false;
+		if(isNullOrEmpty(this.getAlarmValue()))
+			return false;
+		if(isNullOrEmpty(this.getGroups()) && isNullOrEmpty(this.getReceivers()))
+			return false;
+		if(isNullOrEmpty(this.getHostName()))
+			return false;
+		if(isNullOrEmpty(this.getIpAddr()))
+			return false;
+		if(isNullOrEmpty(this.getRecvType()))
+			return false;
+
+		if(this.getCreateTime() == null)
+			return false;
+		if(this.getRecvList().size() <= 0 && this.getGrpList().size() <= 0)
+			return false;
+		
+		if (this.resolveAlarmType() == null)
+			return false;
+		if (this.resolveRecvType() == null)
+			return false;
+		
+		return true;
+	}
+
+	public List<String> getRecvList() {
+		return resolvePlusList(false);
+	}
+
+	private List<String> resolvePlusList(boolean group) {
+		String listStr = null;
+		if (group)
+			listStr = this.getGroups();
+		else
+			listStr = this.getReceivers();
+			
+		List<String> res = new ArrayList<String>();
+		if (isNullOrEmpty(listStr))
+			return res;
+		for(String word : listStr.split("+")) {
+			if (isNullOrEmpty(word))
+				continue;
+			res.add(word);
+		}
+		return res;
+	}
+	
+	public List<String> getGrpList() {
+		return resolvePlusList(true);
+	}
+	
+	private static boolean isNullOrEmpty(String str) {
+		return str == null || str.equals("");
+	}
+	
+	public AlarmType resolveAlarmType() {
+		try {
+			return AlarmType.valueOf(this.getAlarmType());
+		} catch (Exception e) {
+			return null;
+		}
+	}
+	
+	public RecvType resolveRecvType() {
+		try {
+			return RecvType.valueOf(this.getRecvType());
+		} catch (Exception e) {
+			return null;
+		}
+	}
 }
