@@ -1,12 +1,14 @@
 package com.sivalabs.springapp.entities;
 
 import java.util.Date;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -22,6 +24,8 @@ public class Receiver {
 	@Column(nullable = false)
 	private String phone;
 	private Date dob;
+	@ManyToMany(mappedBy = "receivers")
+	private Set<Group> groups;
 
 	public Receiver() {
 	}
@@ -78,6 +82,14 @@ public class Receiver {
 
 	public void setDob(Date dob) {
 		this.dob = dob;
+	}
+
+	public Set<Group> getGroups() {
+		return groups;
+	}
+
+	public void setGroups(Set<Group> groups) {
+		this.groups = groups;
 	}
 
 }
